@@ -132,8 +132,16 @@ if (empty($_SESSION["keranjang"]) OR !isset($_SESSION["keranjang"]))
 
                  $total_pembelian = $totalbelanja + $tarif;
 
-                 $koneksi->query("INSERT INTO pembelian (id_pelanggan,id_ongkir,tanggal_pembelian,total_pembelian,nama_kota,tarif,alamat_pengiriman)
-                 	                VALUES ('$id_pelanggan','$id_ongkir','$tanggal_pembelian','$total_pembelian','$nama_kota','$tarif','$alamat_pengiriman') ");
+                 $stmt = $koneksi->prepare("
+					INSERT INTO pembelian
+						(id_pelanggan, id_ongkir, tanggal_pembelian, total_pembelian,
+						nama_kota, tarif, alamat_pengiriman, status_pembelian, resi_pengiriman)
+					VALUES
+						(?, ?, CURDATE(), ?, ?, ?, ?, 'pending', '')
+					");
+					$stmt->bind_param('iiisis', $idPelanggan, $idOngkir, $total, $namaKota, $tarif, $alamat);
+					$stmt->execute();
+
 
                  $id_pembelian_barusan = $koneksi->insert_id;
 
